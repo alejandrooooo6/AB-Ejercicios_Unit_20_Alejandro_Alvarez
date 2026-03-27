@@ -11,4 +11,4 @@ Project build using Vite and Typescript, might add a website in the future.
    `npx tsx Entregable_1/src/code/json_data_extractor.ts`
 3. **Once finished**, the following message will pop up in the terminal:
    `"Data correctly read and processed."`
-4. Now the data has been proessed and saved
+4. Now the data has been read and processed.
