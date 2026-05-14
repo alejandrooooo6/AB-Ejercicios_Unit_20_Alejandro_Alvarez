@@ -1,3 +1,5 @@
+import fs from 'node:fs/promises';
+
 // Array of strings with the id of the target provinces
 const TARGET_PROVINCES = ["28", "15", "06", "38"];
 

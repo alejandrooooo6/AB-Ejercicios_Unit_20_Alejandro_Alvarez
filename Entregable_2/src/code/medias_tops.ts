@@ -3,112 +3,124 @@ import { extractData } from '../../../Entregable_1/src/code/json_data_extractor.
 async function calculateBothMeans() {
   const extractedData = await extractData();
 
-  // Storage setup
-  const stats: Record<string, { 
-    diesel_A: { total: number; count: number };
-    gasolina_95: { total: number; count: number };
-  }> = {};
+  // simple object to store sums and counts
+  let estadisticas: any = {};
 
-  // Loop through the stations
-  for (const station of extractedData) {
-    const provName = station.provincia;
+  // Standard loop to go through the gas stations
+  for (let gasolinera of extractedData) {
+    let provincia = gasolinera.provincia;
 
-    // If we haven't seen this province, initialize its structure for both fuels
-    if (!stats[provName]) {
-      stats[provName] = {
-        diesel_A: { total: 0, count: 0 },
-        gasolina_95: { total: 0, count: 0 }
+    // If its the first time we see this province, we initialize it
+    if (estadisticas[provincia] === undefined) {
+      estadisticas[provincia] = {
+        sumaDiesel: 0, 
+        cantidadDiesel: 0,
+        sumaGasolina: 0, 
+        cantidadGasolina: 0
       };
     }
 
-    // Clean and convert BOTH prices
-    const priceDiesel = parseFloat(station.diesel_A.replace(',', '.'));
-    const priceGasolina = parseFloat(station.gasolina_95.replace(',', '.'));
+    // Clean the prices (change comma to dot)
+    let precioDiesel = parseFloat(gasolinera.diesel_A.replace(',', '.'));
+    let precioGasolina = parseFloat(gasolinera.gasolina_95.replace(',', '.'));
 
-    // If Diesel A is a valid number, add it to the diesel totals
-    if (!isNaN(priceDiesel)) {
-      stats[provName].diesel_A.total += priceDiesel;
-      stats[provName].diesel_A.count++;
+    // If the price is a valid number, we add it up
+    if (isNaN(precioDiesel) == false) {
+      estadisticas[provincia].sumaDiesel += precioDiesel;
+      estadisticas[provincia].cantidadDiesel++;
     }
 
-    // If Gasolina 95 is a valid number, add it to the gasolina totals
-    if (!isNaN(priceGasolina)) {
-      stats[provName].gasolina_95.total += priceGasolina;
-      stats[provName].gasolina_95.count++;
+    if (isNaN(precioGasolina) == false) {
+      estadisticas[provincia].sumaGasolina += precioGasolina;
+      estadisticas[provincia].cantidadGasolina++;
     }
   }
 
-  // Calculate final means and format for the table
-  const results = Object.keys(stats).map(prov => {
-    const dStats = stats[prov].diesel_A;
-    const gStats = stats[prov].gasolina_95;
+  // Prepare the final table
+  let resultados = [];
 
-    // Calculate averages (checking if count > 0, to  prevent "NaN" errors )
-    const meanDiesel = dStats.count > 0 
-      ? (dStats.total / dStats.count).toFixed(3) + " €" 
-      : "N/A";
-      
-    const meanGasolina = gStats.count > 0 
-      ? (gStats.total / gStats.count).toFixed(3) + " €" 
-      : "N/A";
+  // Loop through the saved provinces
+  for (let prov in estadisticas) {
+    let datos = estadisticas[prov];
+    
+    // Calculate diesel average
+    let mediaDiesel = "N/A";
+    if (datos.cantidadDiesel > 0) {
+      mediaDiesel = (datos.sumaDiesel / datos.cantidadDiesel).toFixed(3) + " €";
+    }
 
-    return {
+    // Calculate gasoline average
+    let mediaGasolina = "N/A";
+    if (datos.cantidadGasolina > 0) {
+      mediaGasolina = (datos.sumaGasolina / datos.cantidadGasolina).toFixed(3) + " €";
+    }
+
+    // Add the result to our list
+    resultados.push({
       Provincia: prov,
-      'Media Diesel A': meanDiesel,
-      'Media Gasolina 95': meanGasolina
-    };
-  });
+      'Media Diesel A': mediaDiesel,
+      'Media Gasolina 95': mediaGasolina
+    });
+  }
 
-  // Print the final combined table
   console.log("\nMean Prices per Province:");
-  console.table(results);
+  console.table(resultados);
 }
 
 async function calculateTops() {
   const extractedData = await extractData();
 
-  // Helper function to clean data and grab only stations that sell the requested fuel
-  const getCleanFuelData = (fuelKey: 'diesel_A' | 'gasolina_95') => {
-    return extractedData
-      .map(station => ({
-        Rótulo: station.estacion,
-        Provincia: station.provincia,
-        Municipio: station.municipio,
-        // Swap comma for dot and turn into a number
-        Precio: parseFloat(station[fuelKey].replace(',', '.')) 
-      }))
-      .filter(station => !isNaN(station.Precio)); 
-  };
+  let listaDiesel = [];
+  let listaGasolina = [];
 
-  // Prepare the clean lists for both fuels
-  const dieselData = getCleanFuelData('diesel_A');
-  const gasolinaData = getCleanFuelData('gasolina_95');
+  //Separate and clean the data with a standard loop
+  for (let gasolinera of extractedData) {
+    let precioD = parseFloat(gasolinera.diesel_A.replace(',', '.'));
+    let precioG = parseFloat(gasolinera.gasolina_95.replace(',', '.'));
 
-  // Helper functions for sorting
-  // Ascending (Smallest to Largest) -> Cheapest
-  const sortCheapest = (a: { Precio: number }, b: { Precio: number }) => a.Precio - b.Precio;
-  // Descending (Largest to Smallest) -> Most Expensive
-  const sortExpensive = (a: { Precio: number }, b: { Precio: number }) => b.Precio - a.Precio;
+    // If diesel price is valid, add it to the diesel list
+    if (isNaN(precioD) == false) {
+      listaDiesel.push({
+        Rótulo: gasolinera.estacion,
+        Provincia: gasolinera.provincia,
+        Municipio: gasolinera.municipio,
+        Precio: precioD
+      });
+    }
 
-  // Calculate the Top 5s using sort() and slice(0, 5)
-  const cheapDiesel = [...dieselData].sort(sortCheapest).slice(0, 5);
-  const expDiesel = [...dieselData].sort(sortExpensive).slice(0, 5);
+    // If gasoline price is valid, add it to the gasoline list
+    if (isNaN(precioG) == false) {
+      listaGasolina.push({
+        Rótulo: gasolinera.estacion,
+        Provincia: gasolinera.provincia,
+        Municipio: gasolinera.municipio,
+        Precio: precioG
+      });
+    }
+  }
 
-  const cheapGasolina = [...gasolinaData].sort(sortCheapest).slice(0, 5);
-  const expGasolina = [...gasolinaData].sort(sortExpensive).slice(0, 5);
+  // Sort the lists
+  // We use .slice() to make a quick copy so we don't mess up the original arrays
+  // a.Precio - b.Precio sorts from cheapest to most expensive
+  
+  let dieselBarato = listaDiesel.slice().sort((a, b) => a.Precio - b.Precio).slice(0, 5);
+  let dieselCaro = listaDiesel.slice().sort((a, b) => b.Precio - a.Precio).slice(0, 5);
 
-  // Print the results
+  let gasolinaBarata = listaGasolina.slice().sort((a, b) => a.Precio - b.Precio).slice(0, 5);
+  let gasolinaCara = listaGasolina.slice().sort((a, b) => b.Precio - a.Precio).slice(0, 5);
+
+  // rint the tables
   console.log("\n--- TOP 5 MÁS BARATAS: DIESEL A ---");
-  console.table(cheapDiesel);
+  console.table(dieselBarato);
 
   console.log("\n--- TOP 5 MÁS CARAS: DIESEL A ---");
-  console.table(expDiesel);
+  console.table(dieselCaro);
 
   console.log("\n--- TOP 5 MÁS BARATAS: GASOLINA 95 E5 ---");
-  console.table(cheapGasolina);
+  console.table(gasolinaBarata);
 
   console.log("\n--- TOP 5 MÁS CARAS: GASOLINA 95 E5 ---");
-  console.table(expGasolina);
+  console.table(gasolinaCara);
 }
 
 calculateTops();
