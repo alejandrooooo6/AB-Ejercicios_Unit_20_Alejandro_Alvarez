@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    /* Basic Options */
+    "target": "ESNext",                                // Modern JavaScript features
+    "module": "NodeNext",                              // Required for "type": "module"
+    "moduleResolution": "NodeNext",
+    "lib": ["ESNext"],
+    
+    /* Strictness */
+    "strict": true,                                    // Helps you catch bugs early
+    "esModuleInterop": true,                           // Better compatibility with libraries
+    "skipLibCheck": true,                              // Faster builds
+    "forceConsistentCasingInFileNames": true,
+
+    /* Type Definitions */
+    "types": ["jest", "node"]                          
+  },
+  "include": [
+    "**/*.ts"                                          // Tell TS to watch all .ts files
+  ],
+  "exclude": [
+    "node_modules"                                     // Don't look inside the black hole
+  ]
+}
