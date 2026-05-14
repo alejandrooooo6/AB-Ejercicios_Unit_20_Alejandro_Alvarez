@@ -25,10 +25,10 @@ describe('date_utils', () => {
             
            // Arrange 
 
-            let d = new Date();
-            let day = String(d.getDate()).padStart(2, '0');
-            let month = String(d.getMonth() + 1).padStart(2, '0');
-            let year = d.getFullYear();
+            const d = new Date();
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
             const today = `${day}-${month}-${year}`;
 
             // Assert

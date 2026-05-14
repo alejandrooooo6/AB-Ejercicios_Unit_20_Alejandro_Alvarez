@@ -4,11 +4,11 @@ async function calculateBothMeans() {
   const extractedData = await extractData();
 
   // simple object to store sums and counts
-  let estadisticas: any = {};
+  const estadisticas: any = {};
 
   // Standard loop to go through the gas stations
-  for (let gasolinera of extractedData) {
-    let provincia = gasolinera.provincia;
+  for (const gasolinera of extractedData) {
+    const provincia = gasolinera.provincia;
 
     // If its the first time we see this province, we initialize it
     if (estadisticas[provincia] === undefined) {
@@ -21,8 +21,8 @@ async function calculateBothMeans() {
     }
 
     // Clean the prices (change comma to dot)
-    let precioDiesel = parseFloat(gasolinera.diesel_A.replace(',', '.'));
-    let precioGasolina = parseFloat(gasolinera.gasolina_95.replace(',', '.'));
+    const precioDiesel = parseFloat(gasolinera.diesel_A.replace(',', '.'));
+    const precioGasolina = parseFloat(gasolinera.gasolina_95.replace(',', '.'));
 
     // If the price is a valid number, we add it up
     if (isNaN(precioDiesel) == false) {
@@ -37,11 +37,11 @@ async function calculateBothMeans() {
   }
 
   // Prepare the final table
-  let resultados = [];
+  const resultados = [];
 
   // Loop through the saved provinces
-  for (let prov in estadisticas) {
-    let datos = estadisticas[prov];
+  for (const prov in estadisticas) {
+    const datos = estadisticas[prov];
     
     // Calculate diesel average
     let mediaDiesel = "N/A";
@@ -70,13 +70,13 @@ async function calculateBothMeans() {
 async function calculateTops() {
   const extractedData = await extractData();
 
-  let listaDiesel = [];
-  let listaGasolina = [];
+  const listaDiesel = [];
+  const listaGasolina = [];
 
   //Separate and clean the data with a standard loop
-  for (let gasolinera of extractedData) {
-    let precioD = parseFloat(gasolinera.diesel_A.replace(',', '.'));
-    let precioG = parseFloat(gasolinera.gasolina_95.replace(',', '.'));
+  for (const gasolinera of extractedData) {
+    const precioD = parseFloat(gasolinera.diesel_A.replace(',', '.'));
+    const precioG = parseFloat(gasolinera.gasolina_95.replace(',', '.'));
 
     // If diesel price is valid, add it to the diesel list
     if (isNaN(precioD) == false) {
@@ -103,11 +103,11 @@ async function calculateTops() {
   // We use .slice() to make a quick copy so we don't mess up the original arrays
   // a.Precio - b.Precio sorts from cheapest to most expensive
   
-  let dieselBarato = listaDiesel.slice().sort((a, b) => a.Precio - b.Precio).slice(0, 5);
-  let dieselCaro = listaDiesel.slice().sort((a, b) => b.Precio - a.Precio).slice(0, 5);
+  const dieselBarato = listaDiesel.slice().sort((a, b) => a.Precio - b.Precio).slice(0, 5);
+  const dieselCaro = listaDiesel.slice().sort((a, b) => b.Precio - a.Precio).slice(0, 5);
 
-  let gasolinaBarata = listaGasolina.slice().sort((a, b) => a.Precio - b.Precio).slice(0, 5);
-  let gasolinaCara = listaGasolina.slice().sort((a, b) => b.Precio - a.Precio).slice(0, 5);
+  const gasolinaBarata = listaGasolina.slice().sort((a, b) => a.Precio - b.Precio).slice(0, 5);
+  const gasolinaCara = listaGasolina.slice().sort((a, b) => b.Precio - a.Precio).slice(0, 5);
 
   // rint the tables
   console.log("\n--- TOP 5 MÁS BARATAS: DIESEL A ---");

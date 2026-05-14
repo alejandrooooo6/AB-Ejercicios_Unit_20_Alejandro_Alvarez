@@ -4,10 +4,10 @@ import { calculateAverages, saveChart } from './chart_utils.js';
 import { FuelPrice } from './fuel_price.js';
 
 async function main() {
-  let reader = new ApiReader();
-  let pastDates = getPast30Days();
+  const reader = new ApiReader();
+  const pastDates = getPast30Days();
   
-  let provinces = [
+  const provinces = [
     { id: "28", name: "Madrid" },
     { id: "15", name: "Coruna" },
     { id: "06", name: "Badajoz" },
@@ -16,14 +16,14 @@ async function main() {
 
   console.log("Starting the program...\n");
 
-  for (let province of provinces) {
+  for (const province of provinces) {
     console.log("--> Downloading data for " + province.name + "...");
-    let provinceData: FuelPrice[] = [];
+    const provinceData: FuelPrice[] = [];
 
-    for (let date of pastDates) {
-      let dailyData = await reader.downloadData(date, province.id);
+    for (const date of pastDates) {
+      const dailyData = await reader.downloadData(date, province.id);
       
-      for (let item of dailyData) {
+      for (const item of dailyData) {
         provinceData.push(item);
       }
       
@@ -32,8 +32,8 @@ async function main() {
 
     console.log("Calculating averages and drawing charts for " + province.name + "...\n");
     
-    let dieselAverages = calculateAverages(provinceData, "diesel");
-    let gasolineAverages = calculateAverages(provinceData, "gasoline");
+    const dieselAverages = calculateAverages(provinceData, "diesel");
+    const gasolineAverages = calculateAverages(provinceData, "gasoline");
 
     await saveChart(
       "grafica_diesel_" + province.name + ".png", 

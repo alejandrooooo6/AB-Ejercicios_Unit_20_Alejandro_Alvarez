@@ -4,41 +4,29 @@ import tseslint from "typescript-eslint";
 import jest from "eslint-plugin-jest";
 
 export default tseslint.config(
-  // Base JavaScript configuration
   js.configs.recommended,
-
-  // TypeScript configuration
   ...tseslint.configs.recommended,
-
   {
-    // Apply this to all your TS files
-    files: ["**/*.ts"],
+    // This applies to ALL files (js and ts)
     languageOptions: {
-      ecmaVersion: "latest",
-      sourceType: "module",
       globals: {
-        ...globals.node, 
+        ...globals.node, // This defines 'console', 'process', etc.
       },
     },
     rules: {
-      "no-unused-vars": "warn",
-      "@typescript-eslint/no-explicit-any": "off", 
+      "prefer-const": "error",
+      "no-console": "off",
+      // This ignores unused variables if they start with an underscore (like _error)
+      "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
     },
   },
-
-  // Specific configuration for your tests
   {
     files: ["**/*.spec.ts", "**/*.test.ts"],
-    plugins: {
-      jest,
-    },
+    plugins: { jest },
     languageOptions: {
       globals: {
-        ...globals.jest, 
+        ...globals.jest,
       },
-    },
-    rules: {
-      ...jest.configs.recommended.rules,
     },
   }
 );

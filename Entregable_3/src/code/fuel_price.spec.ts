@@ -7,10 +7,10 @@ describe('FuelPrice Class Logic', () => {
         test('should correctly assign all properties when instantiated', () => {
 
             // Arrange
-            let date = "15-04-2026"
-            let province = "Madrid"
-            let diesel = 1.99
-            let gasoline = 3.23
+            const date = "15-04-2026"
+            const province = "Madrid"
+            const diesel = 1.99
+            const gasoline = 3.23
 
             // Act
 
@@ -29,8 +29,8 @@ describe('FuelPrice Class Logic', () => {
 
             // Arrange
 
-            let diesel = 1.99
-            let gasoline = 3.23
+            const diesel = 1.99
+            const gasoline = 3.23
             
             // Act
 
@@ -46,8 +46,8 @@ describe('FuelPrice Class Logic', () => {
 
             // Arrange
 
-            let noDate = ""
-            let noPrice = 0
+            const noDate = ""
+            const noPrice = 0
             
             // Act
 
