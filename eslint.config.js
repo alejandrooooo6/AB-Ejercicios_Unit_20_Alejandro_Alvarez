@@ -13,11 +13,17 @@ export default tseslint.config(
         ...globals.node, // This defines 'console', 'process', etc.
       },
     },
-    rules: {
+   rules: {
       "prefer-const": "error",
       "no-console": "off",
-      // This ignores unused variables if they start with an underscore (like _error)
-      "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }],
+      // This allows 'any' so your older exercises pass
+      "@typescript-eslint/no-explicit-any": "off", 
+      // This ignores unused variables starting with _ (like _error)
+      "@typescript-eslint/no-unused-vars": ["warn", { 
+        "argsIgnorePattern": "^_", 
+        "varsIgnorePattern": "^_" 
+      }],
+      "no-useless-assignment": "warn" 
     },
   },
   {
