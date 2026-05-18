@@ -6,7 +6,7 @@ export class ApiReader {
     
     try {
       const response = await fetch(url);
-      const json = await response.json();
+      const json = await response.json() as any;
       
       let stations = [];
       if (json.ListaEESSPrecio) {
